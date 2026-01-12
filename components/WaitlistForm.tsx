@@ -34,8 +34,8 @@ export default function WaitlistForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto mt-10 max-w-md">
-      <div className="flex gap-2">
+    <form onSubmit={handleSubmit} className="mx-auto mt-10 max-w-lg">
+      <div className="flex gap-3 rounded-xl border border-slate-700/50 bg-slate-900/80 p-1 shadow-lg shadow-primary/10 backdrop-blur-sm">
         <input
           type="email"
           name="email"
@@ -44,12 +44,12 @@ export default function WaitlistForm() {
           placeholder="Enter your email"
           required
           disabled={isPending}
-          className="flex-1 rounded-lg border border-slate-700 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
+          className="flex-1 rounded-lg border-0 bg-transparent px-5 py-4 text-white placeholder-slate-500 focus:outline-none focus:ring-0 disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-lg bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-lg bg-primary px-8 py-4 font-semibold text-white shadow-md shadow-primary/30 transition-all hover:bg-red-600 hover:shadow-lg hover:shadow-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isPending ? 'Joining...' : 'Join the Waitlist'}
         </button>

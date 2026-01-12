@@ -3,6 +3,9 @@ export const revalidate = 0
 
 import { supabase } from '@/lib/supabase'
 import WaitlistForm from '@/components/WaitlistForm'
+import ProductCard from '@/components/ProductCard'
+import LiveStatsBar from '@/components/LiveStatsBar'
+import FAQSection from '@/components/FAQSection'
 
 export interface Product {
   id: number
@@ -51,12 +54,17 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden px-4 py-24 sm:px-6 lg:px-8">
+        {/* Radial gradient background glow */}
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_50%,rgba(255,0,0,0.1),transparent_50%)]" />
+        
         <div className="mx-auto max-w-4xl text-center">
-          <h1 className="font-blocky text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
-            Gotta Build &apos;Em All.
+          <h1 className="font-blocky text-6xl font-black tracking-tight sm:text-7xl lg:text-8xl">
+            <span className="bg-gradient-to-r from-primary via-red-500 to-secondary bg-clip-text text-transparent">
+              Gotta Build &apos;Em All.
+            </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-400">
+          <p className="mx-auto mt-8 max-w-2xl text-xl leading-8 text-gray-400">
             Real-time stock tracking for the newly announced collaboration.
           </p>
 
@@ -64,6 +72,9 @@ export default async function Home() {
           <WaitlistForm />
         </div>
       </section>
+
+      {/* Live Stats Bar */}
+      <LiveStatsBar />
 
       {/* Product Grid */}
       <section className="px-4 py-12 sm:px-6 lg:px-8">
@@ -81,53 +92,15 @@ export default async function Home() {
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition-all hover:border-slate-700 hover:shadow-lg hover:shadow-primary/10"
-                >
-                  <div className="flex flex-col gap-4">
-                    {product.image_url && (
-                      <div className="aspect-video w-full overflow-hidden rounded-lg bg-slate-800">
-                        <img
-                          src={product.image_url}
-                          alt={product.name}
-                          className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      </div>
-                    )}
-                    <h3 className="text-xl font-bold text-white">{product.name}</h3>
-                    <div className="flex flex-col gap-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-white">
-                          {product.price || 'TBA'}
-                        </span>
-                        <span
-                          className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase ${getStatusColor(product.status)}`}
-                        >
-                          {product.status}
-                        </span>
-                      </div>
-                      {product.retailer && (
-                        <p className="text-sm text-slate-400">Retailer: {product.retailer}</p>
-                      )}
-                      {product.buy_url && (
-                        <a
-                          href={product.buy_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-2 inline-block rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-600 text-center"
-                        >
-                          Buy Now
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <ProductCard key={product.id} product={product} getStatusColor={getStatusColor} />
               ))}
             </div>
           )}
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQSection />
     </main>
   )
 }
