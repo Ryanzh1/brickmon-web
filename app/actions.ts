@@ -56,7 +56,7 @@ export async function subscribeToWaitlist(
 
     return {
       success: true,
-      message: "You're on the list!",
+      message: "Welcome to the club!",
     }
   } catch (error) {
     console.error('Waitlist subscription error:', error)
