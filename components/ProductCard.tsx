@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import { Product } from '@/app/page'
+import { generateSlug, parsePrice, getAvailability } from '@/lib/utils'
 
 interface ProductCardProps {
   product: Product
@@ -6,30 +8,9 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, getStatusColor }: ProductCardProps) {
-  // Parse price from string (e.g., "$99.99" -> 99.99)
-  const parsePrice = (priceString: string | null): number | null => {
-    if (!priceString || priceString === 'TBA') return null
-    const match = priceString.match(/[\d.]+/)
-    return match ? parseFloat(match[0]) : null
-  }
-
-  // Map status to schema.org availability
-  const getAvailability = (status: string): string => {
-    const upperStatus = status.toUpperCase()
-    if (upperStatus.includes('IN STOCK') || upperStatus.includes('AVAILABLE')) {
-      return 'https://schema.org/InStock'
-    }
-    if (upperStatus.includes('OUT OF STOCK') || upperStatus.includes('OUT OF STOCK')) {
-      return 'https://schema.org/OutOfStock'
-    }
-    if (upperStatus.includes('COMING SOON') || upperStatus.includes('SOON')) {
-      return 'https://schema.org/PreOrder'
-    }
-    return 'https://schema.org/OutOfStock'
-  }
-
   const price = parsePrice(product.price)
   const availability = getAvailability(product.status)
+  const productSlug = generateSlug(product.name)
 
   // Generate JSON-LD structured data
   const jsonLd = {
@@ -58,15 +39,21 @@ export default function ProductCard({ product, getStatusColor }: ProductCardProp
 
       <div className="flex flex-col gap-4">
         {product.image_url && (
-          <div className="aspect-video w-full overflow-hidden rounded-lg bg-slate-800">
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
-            />
-          </div>
+          <Link href={`/set/${productSlug}`} className="block">
+            <div className="aspect-video w-full overflow-hidden rounded-lg bg-slate-800">
+              <img
+                src={product.image_url}
+                alt={product.name}
+                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+              />
+            </div>
+          </Link>
         )}
-        <h3 className="text-xl font-bold text-white">{product.name}</h3>
+        <Link href={`/set/${productSlug}`} className="group/link">
+          <h3 className="text-xl font-bold text-white transition-colors group-hover/link:text-primary">
+            {product.name}
+          </h3>
+        </Link>
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-white">

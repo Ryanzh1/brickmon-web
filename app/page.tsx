@@ -15,6 +15,7 @@ export interface Product {
   retailer: string | null
   image_url: string | null
   buy_url: string | null
+  description?: string | null
 }
 
 const getStatusColor = (status: string) => {
