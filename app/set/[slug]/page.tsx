@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server'; // Check your import path for supabase
+import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
