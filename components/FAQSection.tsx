@@ -9,14 +9,24 @@ interface FAQItem {
 
 const faqs: FAQItem[] = [
   {
+    question: 'What is the LEGO Pokémon Treasure Hunt?',
+    answer:
+      'The LEGO Pokémon Golden Brick Hunt is a contest where fans can win exclusive sets and prizes by finding hidden golden bricks in LEGO Pokémon sets. Participants follow clues and submit entries for a chance to win limited edition sets and other rewards.',
+  },
+  {
+    question: 'When does the LEGO Charizard set release?',
+    answer:
+      'The LEGO Charizard set is expected to release in January 2026. We\'ll update this tracker with exact dates and availability as soon as official information is confirmed by Lego and The Pokémon Company.',
+  },
+  {
+    question: 'Where can I buy the LEGO Interactive Poké Ball?',
+    answer:
+      'The LEGO Interactive Poké Ball will be available exclusively at the Lego Store and select authorized retailers. Availability may vary by region. Sign up for our waitlist to get notified when it becomes available.',
+  },
+  {
     question: 'Which Pokémon are in the first LEGO wave?',
     answer:
       'The launch lineup includes Pikachu, Eevee, the Kanto Starters (Charizard, Blastoise, Venusaur), and an interactive Poké Ball.',
-  },
-  {
-    question: 'What is the Lego Pokémon Treasure Hunt?',
-    answer:
-      'It is a contest where fans can win exclusive sets by finding hidden golden bricks in sets. Stay tuned to BrickMon for clues.',
   },
   {
     question: 'When does the Lego Pokémon Kanto set release?',

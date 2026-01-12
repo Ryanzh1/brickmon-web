@@ -31,7 +31,7 @@ export default function TreasureHuntBanner() {
         >
           <span className="text-lg">🏆</span>
           <span>
-            <span className="font-bold">Contest Alert:</span> The Golden Brick Treasure Hunt has begun!{' '}
+            <span className="font-bold">Treasure Hunt Alert:</span> The LEGO Pokémon Golden Brick Hunt is live! Find clues & win prizes.{' '}
             <span className="underline">Read More →</span>
           </span>
         </a>
