@@ -15,7 +15,8 @@ interface PageProps {
 }
 
 async function getProductBySlug(slug: string): Promise<Product | null> {
-  const { data, error } = await supabase.from('products').select('*').execute()
+  // ✅ NEW (Use this)
+const { data, error } = await supabase.from('products').select('*').eq('slug', slug).single();
 
   if (error || !data) return null
 
