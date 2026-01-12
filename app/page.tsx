@@ -66,7 +66,9 @@ export default async function Home() {
             </span>
           </h1>
           <p className="mx-auto mt-8 max-w-2xl text-xl leading-8 text-gray-400">
-            Real-time stock tracking for the newly announced collaboration.
+            Real-time stock tracking for the newly announced LEGO® Pokémon collaboration.
+            <br />
+            <span className="text-sm text-gray-500">Prices and images: TBC (To Be Confirmed)</span>
           </p>
 
           {/* Waitlist Form */}

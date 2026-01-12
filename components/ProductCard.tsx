@@ -38,17 +38,32 @@ export default function ProductCard({ product, getStatusColor }: ProductCardProp
       />
 
       <div className="flex flex-col gap-4">
-        {product.image_url && (
-          <Link href={`/set/${productSlug}`} className="block">
-            <div className="aspect-video w-full overflow-hidden rounded-lg bg-slate-800">
-              <img
-                src={product.image_url}
-                alt={product.name}
-                className="h-full w-full object-cover transition-transform group-hover:scale-105"
-              />
-            </div>
-          </Link>
-        )}
+        <Link href={`/set/${productSlug}`} className="block">
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-slate-800">
+            {product.image_url ? (
+              <>
+                <img
+                  src={product.image_url}
+                  alt={product.name}
+                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                />
+                {/* TBC Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                  <span className="rounded-full bg-slate-900/90 px-4 py-2 text-sm font-bold text-yellow-400 border border-yellow-500/30">
+                    TBC
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="flex h-full items-center justify-center">
+                <div className="text-center">
+                  <div className="mb-2 text-4xl">📦</div>
+                  <span className="text-sm font-semibold text-slate-500">TBC</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </Link>
         <Link href={`/set/${productSlug}`} className="group/link">
           <h3 className="text-xl font-bold text-white transition-colors group-hover/link:text-primary">
             {product.name}
@@ -57,7 +72,7 @@ export default function ProductCard({ product, getStatusColor }: ProductCardProp
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-white">
-              {product.price || 'TBA'}
+              TBC
             </span>
             <span
               className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase ${getStatusColor(product.status)}`}

@@ -13,12 +13,25 @@ key: str = os.environ.get("SUPABASE_KEY")
 
 if not url or not key:
     print("Error: Missing Supabase credentials")
+    print(f"SUPABASE_URL: {'Set' if url else 'Missing'}")
+    print(f"SUPABASE_KEY: {'Set' if key else 'Missing'}")
     exit(1)
 
-supabase: Client = create_client(url, key)
+try:
+    supabase: Client = create_client(url, key)
+    print(f"✓ Connected to Supabase: {url[:30]}...")
+except Exception as e:
+    print(f"Error creating Supabase client: {e}")
+    exit(1)
 
 async def check_stock(page, product):
-    print(f"Checking {product['name']} at {product['retailer']}...")
+    retailer = product.get('retailer', 'Unknown')
+    print(f"Checking {product['name']} at {retailer}...")
+    
+    # Skip products without buy_url
+    if not product.get('buy_url'):
+        print(f"  ⚠️  Skipping {product['name']} - no buy_url provided")
+        return None
     
     try:
         # Go to the product page
@@ -63,11 +76,18 @@ async def main():
     print("--- Starting BrickMon Scraper ---")
     
     # 1. Fetch all products from Supabase
-    response = supabase.table("products").select("*").execute()
-    products = response.data
-    
-    if not products:
-        print("No products found in database.")
+    try:
+        response = supabase.table("products").select("*").execute()
+        products = response.data
+        
+        if not products:
+            print("No products found in database.")
+            return
+        
+        print(f"Found {len(products)} products to check")
+    except Exception as e:
+        print(f"Error fetching products from Supabase: {e}")
+        print(f"Supabase URL: {url[:20]}..." if url else "No URL")
         return
 
     # 2. Launch Browser (Headless)
@@ -79,18 +99,25 @@ async def main():
 
         # 3. Loop through products
         for product in products:
+            # Skip products without buy_url (can't check stock without a URL)
+            if not product.get('buy_url'):
+                print(f"Skipping {product.get('name', 'Unknown')} - no buy_url")
+                continue
+                
             new_status = await check_stock(page, product)
             
             # 4. Update Database if status changed
-            if new_status and new_status != product['status']:
-                print(f"*** UPDATE: {product['name']} changed from {product['status']} to {new_status} ***")
-                supabase.table("products").update({
-                    "status": new_status, 
-                    "last_checked": "now()"
-                }).eq("id", product['id']).execute()
-            else:
-                # Still update 'last_checked' timestamp even if status is same
-                supabase.table("products").update({"last_checked": "now()"}).eq("id", product['id']).execute()
+            if new_status:
+                try:
+                    if new_status != product.get('status'):
+                        print(f"*** UPDATE: {product['name']} changed from {product.get('status')} to {new_status} ***")
+                        supabase.table("products").update({
+                            "status": new_status
+                        }).eq("id", product['id']).execute()
+                    else:
+                        print(f"✓ {product['name']} - status unchanged ({new_status})")
+                except Exception as e:
+                    print(f"Error updating {product['name']}: {e}")
 
         await browser.close()
     print("--- Scraper Finished ---")
