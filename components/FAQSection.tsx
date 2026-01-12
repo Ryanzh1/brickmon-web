@@ -9,6 +9,16 @@ interface FAQItem {
 
 const faqs: FAQItem[] = [
   {
+    question: 'Which Pokémon are in the first LEGO wave?',
+    answer:
+      'The launch lineup includes Pikachu, Eevee, the Kanto Starters (Charizard, Blastoise, Venusaur), and an interactive Poké Ball.',
+  },
+  {
+    question: 'What is the Lego Pokémon Treasure Hunt?',
+    answer:
+      'It is a contest where fans can win exclusive sets by finding hidden golden bricks in sets. Stay tuned to BrickMon for clues.',
+  },
+  {
     question: 'When does the Lego Pokémon Kanto set release?',
     answer:
       'The release date is rumored for mid-2026, though official confirmation from Lego and The Pokémon Company is still pending. We\'ll update this tracker as soon as official dates are announced.',
