@@ -1,50 +1,48 @@
-'use client'
+import { supabase } from '@/lib/supabase'
+import WaitlistForm from '@/components/WaitlistForm'
 
-import { useState } from 'react'
-
-interface ProductCard {
+export interface Product {
+  id: number
   name: string
-  price: string
-  status: 'COMING SOON' | 'OUT OF STOCK' | 'IN STOCK'
+  status: string
+  price: string | null
+  retailer: string | null
+  image_url: string | null
+  buy_url: string | null
 }
 
-const products: ProductCard[] = [
-  {
-    name: 'Kanto Region Interactive Set',
-    price: '$TBA',
-    status: 'COMING SOON',
-  },
-  {
-    name: 'Life-Size Pikachu',
-    price: '$99.99',
-    status: 'OUT OF STOCK',
-  },
-  {
-    name: 'Eevee Evolution Pack',
-    price: '$49.99',
-    status: 'IN STOCK',
-  },
-]
-
-const getStatusColor = (status: ProductCard['status']) => {
-  switch (status) {
-    case 'COMING SOON':
-      return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-    case 'OUT OF STOCK':
-      return 'bg-red-500/20 text-red-400 border-red-500/30'
-    case 'IN STOCK':
-      return 'bg-green-500/20 text-green-400 border-green-500/30'
+const getStatusColor = (status: string) => {
+  const upperStatus = status.toUpperCase()
+  if (upperStatus.includes('COMING SOON') || upperStatus.includes('SOON')) {
+    return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
   }
+  if (upperStatus.includes('OUT OF STOCK') || upperStatus.includes('OUT OF STOCK')) {
+    return 'bg-red-500/20 text-red-400 border-red-500/30'
+  }
+  if (upperStatus.includes('IN STOCK') || upperStatus.includes('AVAILABLE')) {
+    return 'bg-green-500/20 text-green-400 border-green-500/30'
+  }
+  // Default fallback
+  return 'bg-slate-500/20 text-slate-400 border-slate-500/30'
 }
 
-export default function Home() {
-  const [email, setEmail] = useState('')
+export default async function Home() {
+  let products: Product[] = []
+  let error: string | null = null
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // TODO: Hook up to Supabase
-    console.log('Email submitted:', email)
-    setEmail('')
+  try {
+    const { data, error: fetchError } = await supabase
+      .from('products')
+      .select('*')
+      .order('id')
+
+    if (fetchError) {
+      error = fetchError.message
+    } else {
+      products = data || []
+    }
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'Failed to fetch products'
   }
 
   return (
@@ -60,50 +58,71 @@ export default function Home() {
           </p>
 
           {/* Waitlist Form */}
-          <form onSubmit={handleSubmit} className="mx-auto mt-10 max-w-md">
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="flex-1 rounded-lg border border-slate-700 bg-slate-900/50 px-4 py-3 text-white placeholder-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-              <button
-                type="submit"
-                className="rounded-lg bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-              >
-                Join the Waitlist
-              </button>
-            </div>
-          </form>
+          <WaitlistForm />
         </div>
       </section>
 
       {/* Product Grid */}
       <section className="px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((product, index) => (
-              <div
-                key={index}
-                className="group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition-all hover:border-slate-700 hover:shadow-lg hover:shadow-primary/10"
-              >
-                <div className="flex flex-col gap-4">
-                  <h3 className="text-xl font-bold text-white">{product.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-white">{product.price}</span>
-                    <span
-                      className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase ${getStatusColor(product.status)}`}
-                    >
-                      {product.status}
-                    </span>
+          {error ? (
+            <div className="text-center">
+              <p className="text-lg text-slate-400">Unable to load products. Please try again later.</p>
+              <p className="mt-2 text-sm text-slate-500">Error: {error}</p>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="mt-4 text-lg text-slate-400">Loading System...</p>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition-all hover:border-slate-700 hover:shadow-lg hover:shadow-primary/10"
+                >
+                  <div className="flex flex-col gap-4">
+                    {product.image_url && (
+                      <div className="aspect-video w-full overflow-hidden rounded-lg bg-slate-800">
+                        <img
+                          src={product.image_url}
+                          alt={product.name}
+                          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                        />
+                      </div>
+                    )}
+                    <h3 className="text-xl font-bold text-white">{product.name}</h3>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold text-white">
+                          {product.price || 'TBA'}
+                        </span>
+                        <span
+                          className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase ${getStatusColor(product.status)}`}
+                        >
+                          {product.status}
+                        </span>
+                      </div>
+                      {product.retailer && (
+                        <p className="text-sm text-slate-400">Retailer: {product.retailer}</p>
+                      )}
+                      {product.buy_url && (
+                        <a
+                          href={product.buy_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-block rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-600 text-center"
+                        >
+                          Buy Now
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </main>
